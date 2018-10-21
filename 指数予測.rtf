@@ -1,0 +1,132 @@
+{\rtf1\ansi\ansicpg932\cocoartf1561\cocoasubrtf600
+{\fonttbl\f0\fnil\fcharset128 HiraginoSans-W5;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww22200\viewh12380\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\b\fs20 \cf0 ########set library#############################\
+import quandl\
+import pandas as pd\
+import numpy as np\
+from matplotlib import pylab as plt\
+%matplotlib inline\
+from fbprophet import Prophet\
+from matplotlib.pylab import rcParams\
+rcParams['figure.figsize'] = 15, 6\
+quandl.ApiConfig.api_key = "qit5xxNQzZJXLt8AspB5" #Key is for shared \
+from datetime import date, datetime, timedelta #for calcutating date info.\
+########set date##################################\
+past=date.today() - timedelta(365*3+1) #used data is 3Y\
+########set calc.##################################\
+def calc(asset):\
+    m = Prophet(growth='logistic', weekly_seasonality=False, yearly_seasonality=True, daily_seasonality=True)\
+    df['cap'] = MAX \
+    m.fit(df);\
+    future = m.make_future_dataframe(periods=300) \
+    future['cap'] = MAX\
+    forecast = m.predict(future)\
+    m.plot(forecast);\
+    plt.xlim(['2018-01-01','2019-03-31'])\
+    plt.ylim([MIN,MAX])\
+    plt.legend()\
+    plt.title(asset, fontdict=\{"fontsize":18\})\
+    plt.subplots_adjust(top=0.9)\
+    filename=asset+"_prophet.png" \
+    plt.savefig("/Users/wn/index/"+filename) \
+\
+########Nikkei225##############################\
+df=quandl.get('Nikkei/Index',start_date=past)["Close Price"] \
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Close Price': 'y', 'Date': 'ds'\})\
+MAX=26000\
+MIN=21000\
+calc("Nikkei225")\
+\
+########S&P500###########################\
+df=quandl.get('CHRIS/CME_SP1',start_date=past) ["Last"] \
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Last': 'y', 'Date': 'ds'\})\
+MAX=df[-150:]["y"].max()*1.05\
+MIN=df[-150:]["y"].min()*0.95\
+calc("S&P500")\
+\
+########Gold - LBMA#################################\
+df=quandl.get('LBMA/GOLD', start_date=past)\
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'USD (PM)': 'y', 'Date': 'ds'\})\
+MAX=df[-150:]["y"].max()*1.1\
+MIN=df[-150:]["y"].min()*0.9\
+calc("Gold price")\
+\
+########Copper - LME#################################\
+df=quandl.get('LME/PR_CU', start_date=past)\
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Cash Buyer': 'y', 'Date': 'ds'\})\
+MAX=df[-150:]["y"].max()*1.1\
+MIN=df[-150:]["y"].min()*0.9\
+calc("Copper price")\
+\
+########Fuel -WTI##################################\
+df =quandl.get('CHRIS/ICE_T1', start_date=past)["Settle"] \
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Settle': 'y', 'Date': 'ds'\})\
+MAX=df[-150:]["y"].max()*1.2\
+MIN=df[-150:]["y"].min()*0.8\
+calc("WTI price")\
+\
+########Dollar index################################\
+df=quandl.get('CHRIS/ICE_DX1', start_date=past)\
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Settle': 'y', 'Date': 'ds'\})\
+MAX=df[-150:]["y"].max()*1.1\
+MIN=df[-150:]["y"].min()*0.9\
+calc("Dollar index")\
+\
+########Yield Gap of USA################################\
+df=quandl.get('USTREASURY/YIELD', start_date=past)\
+df2=df ["10 YR"] -  df ["2 YR"] \
+df = pd.DataFrame(df2).reset_index()\
+df = df.rename(columns=\{0: 'y','Date': 'ds'\})\
+MAX=1\
+MIN=0\
+calc("yield gap of USA 10YR - 2YR")\
+\
+########TRY/USD###########################\
+df=quandl.get('CHRIS/CME_TRY1',start_date=past)["Settle"] \
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Settle': 'y', 'Date': 'ds'\})\
+df["y"]=1/df['y']\
+MAX=0.5\
+MIN=0\
+calc("TRY-USD")\
+\
+########Bitcoin#############################\
+df =quandl.get('BCHARTS/BITFLYERJPY', start_date=past) ["Close"] \
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Close': 'y','Date': 'ds'\})\
+MAX=2500000\
+MIN=600000\
+calc("Bitcoin")\
+\
+#USD-JPY: BOE/XUDLJYD\
+\
+\
+###\
+########TBound_10Y of USA############################\
+#df =quandl.get('USTREASURY/YIELD', start_date=past)["10 YR"] \
+#df = pd.DataFrame(df).reset_index()\
+#df = df.rename(columns=\{'10 YR': 'y', 'Date': 'ds'\})\
+#MAX=df[-150:]["y"].max()*1.1\
+#MIN=df[-150:]["y"].min()*0.9\
+#calc("T-Bond 10Y")\
+\
+########TBound_2Y of USA############################\
+#df =quandl.get('USTREASURY/YIELD', start_date=past) ["2 YR"] \
+#df = pd.DataFrame(df).reset_index()\
+#df = df.rename(columns=\{'2 YR': 'y','Date': 'ds'\})\
+#MAX=df[-150:]["y"].max()*1.1\
+#MIN=df[-150:]["y"].min()*0.9\
+#calc("T-Bond 2Y")\
+\
+}
